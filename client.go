@@ -5,10 +5,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/maotan/go-truffle/cloud"
 	"github.com/maotan/go-truffle/cloud/serviceregistry"
+	"github.com/maotan/go-truffle/feign"
 	"github.com/maotan/go-truffle/truffle"
 	"github.com/maotan/go-truffle/util"
 	"math/rand"
-	"net/http"
 	"time"
 )
 
@@ -22,6 +22,7 @@ func main() {
 		panic(err)
 	}
 
+	feign.Init(registryDiscoveryClient)
 	ip, err := util.GetLocalIP()
 	if err != nil {
 		panic(err)
@@ -35,16 +36,20 @@ func main() {
 
 	registryDiscoveryClient.Register(si)
 
+
 	r := gin.Default()
 	r.GET("/actuator/health", func(c *gin.Context) {
+		svs, _:=registryDiscoveryClient.GetServices()
+		fmt.Print(svs)
 		c.JSON(200, gin.H{
 			"message": "pong",
 		})
 	})
 
 	r.GET("/client/ping", func(c *gin.Context) {
-		instances, err  := registryDiscoveryClient.GetInstances("go-user-server")
-		if err != nil{
+		instances, _  := registryDiscoveryClient.GetInstances("go-user-server")
+		fmt.Print(len(instances))
+		/*if err != nil{
 			panic(truffle.NewWarnError(600 ,"找不到server"))
 		}
 		instance := instances[0]
@@ -56,8 +61,15 @@ func main() {
 
 		}
 		dd, _:= truffle.ParseResponse(resp)
-		c.JSON(resp.StatusCode, dd)
+		c.JSON(resp.StatusCode, dd)*/
+		res, err := feign.DefaultFeign.App("go-user-server").R().SetHeaders(map[string]string{
+			"Content-Type": "application/json",
+		}).Get("/v2/ping")
+		if err != nil{
+			panic(truffle.NewWarnError(700, "123"))
+		}
+		c.String(res.StatusCode(), string(res.Body()))
 	})
 	r.Use(truffle.Recover)
-	r.Run(":9001")
+	r.Run(":9000")
 }
