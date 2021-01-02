@@ -44,8 +44,8 @@ func main() {
 
 	r := gin.Default()
 	r.GET("/actuator/health", func(c *gin.Context) {
-		svs, _:=registryDiscoveryClient.GetServices()
-		fmt.Print(svs)
+		//svs, _:=registryDiscoveryClient.GetServices()
+		//fmt.Print(svs)
 		c.JSON(200, gin.H{
 			"message": "pong",
 		})
