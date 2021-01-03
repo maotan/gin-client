@@ -7,6 +7,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/maotan/go-truffle/cloud"
 	"github.com/maotan/go-truffle/cloud/serviceregistry"
@@ -14,6 +16,7 @@ import (
 	"github.com/maotan/go-truffle/truffle"
 	"github.com/maotan/go-truffle/util"
 	"math/rand"
+	"net/http"
 	"time"
 )
 
@@ -43,6 +46,8 @@ func main() {
 
 
 	r := gin.Default()
+	store := cookie.NewStore([]byte("secret"))
+	r.Use(sessions.Sessions("my-session", store))
 	r.GET("/actuator/health", func(c *gin.Context) {
 		//svs, _:=registryDiscoveryClient.GetServices()
 		//fmt.Print(svs)
@@ -54,19 +59,6 @@ func main() {
 	r.GET("/client/ping", func(c *gin.Context) {
 		instances, _  := registryDiscoveryClient.GetInstances("go-user-server")
 		fmt.Print(len(instances))
-		/*if err != nil{
-			panic(truffle.NewWarnError(600 ,"找不到server"))
-		}
-		instance := instances[0]
-		url := fmt.Sprintf("http://%s:%d/%s",instance.GetHost(), instance.GetPort(), "v2/ping")
-
-		fmt.Println("url:", url)
-		resp, err := http.Get (url)
-		if err!=nil{
-
-		}
-		dd, _:= truffle.ParseResponse(resp)
-		c.JSON(resp.StatusCode, dd)*/
 		res, err := feign.DefaultFeign.App("go-user-server").R().SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 		}).Get("/v2/ping")
@@ -75,6 +67,13 @@ func main() {
 		}
 		c.String(res.StatusCode(), string(res.Body()))
 	})
+
+	r.GET("/client/users", func(c *gin.Context) {
+		session := sessions.Default(c)
+		u := session.Get("user")
+		c.JSON(http.StatusOK, gin.H{"user":u})
+	})
+
 	r.Use(truffle.Recover)
 	r.Run(":9000")
 }
