@@ -48,6 +48,7 @@ func main() {
 	r := gin.Default()
 	store := cookie.NewStore([]byte("secret"))
 	r.Use(sessions.Sessions("my-session", store))
+	r.Use(truffle.Recover)
 	r.GET("/actuator/health", func(c *gin.Context) {
 		//svs, _:=registryDiscoveryClient.GetServices()
 		//fmt.Print(svs)
@@ -57,9 +58,9 @@ func main() {
 	})
 
 	r.GET("/client/ping", func(c *gin.Context) {
-		instances, _  := registryDiscoveryClient.GetInstances("go-user-server")
-		fmt.Print(len(instances))
-		res, err := feign.DefaultFeign.App("go-user-server").R().SetHeaders(map[string]string{
+		//instances, _  := registryDiscoveryClient.GetInstances("go-user-server")
+		//fmt.Print(len(instances))
+		res, err := feign.DefaultFeign.App("gin-server").R().SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 		}).Get("/v2/ping")
 		if err != nil{
@@ -73,7 +74,5 @@ func main() {
 		u := session.Get("user")
 		c.JSON(http.StatusOK, gin.H{"user":u})
 	})
-
-	r.Use(truffle.Recover)
 	r.Run(":9000")
 }
