@@ -18,7 +18,7 @@ import (
 )
 
 func main() {
-	
+
 	err, registryClient:= web.ConsulInit(map[string]string{"client": "zyn3"})
 	if err != nil{
 		panic(err)
