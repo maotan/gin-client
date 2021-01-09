@@ -10,8 +10,8 @@ consul:
   token:
 database:
   type: mysql
-  host: xxx
+  host: localhost
   port: 3306
-  username: xx
-  password: xx
+  username: root
+  password: 123457
 
