@@ -7,8 +7,10 @@ package main
 
 import (
 	"fmt"
+	"gin-client/model"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/ilibs/gosql/v2"
 	"github.com/maotan/go-truffle/feign"
 	"github.com/maotan/go-truffle/truffle"
 	"github.com/maotan/go-truffle/web"
@@ -26,6 +28,7 @@ func main() {
 
 	router := gin.Default()
 	web.RouterInit(router)
+	web.DatabaseInit()  // db
 	router.GET("/client/ping", func(c *gin.Context) {
 		//instances, _  := registryDiscoveryClient.GetInstances("go-user-server")
 		//fmt.Print(len(instances))
@@ -40,8 +43,13 @@ func main() {
 
 	router.GET("/client/users", func(c *gin.Context) {
 		session := sessions.Default(c)
-		u := session.Get("user")
-		c.JSON(http.StatusOK, gin.H{"user":u})
+		userId := session.Get("userId")
+		userDb := &model.User{}
+		gosql.Model(userDb).Where("id=?", userId).Get()
+		if userDb.Id == 0{
+			panic(truffle.NewWarnError(40400, "不存在该用户"))
+		}
+		c.JSON(http.StatusOK, truffle.Success(userDb))
 	})
 
 	serverConf := yaml_config.YamlConf.ServerConf
