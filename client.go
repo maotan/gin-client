@@ -7,11 +7,11 @@ package main
 
 import (
 	"fmt"
+	feign_client "gin-client/feign-client"
 	"gin-client/model"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/ilibs/gosql/v2"
-	"github.com/maotan/go-truffle/feign"
 	"github.com/maotan/go-truffle/truffle"
 	"github.com/maotan/go-truffle/web"
 	"github.com/maotan/go-truffle/yaml_config"
@@ -30,11 +30,7 @@ func main() {
 	web.RouterInit(router)
 	web.DatabaseInit()  // db
 	router.GET("/client/ping", func(c *gin.Context) {
-		//instances, _  := registryDiscoveryClient.GetInstances("go-user-server")
-		//fmt.Print(len(instances))
-		res, err := feign.DefaultFeign.App("gin-server").R().SetHeaders(map[string]string{
-			"Content-Type": "application/json",
-		}).Get("/v1/ping")
+		res, err := feign_client.GinServerPing()
 		if err != nil{
 			panic(truffle.NewWarnError(700, "123"))
 		}
