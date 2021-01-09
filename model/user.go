@@ -13,7 +13,7 @@ type User struct {
 	Mobile	    string   `db:"mobile"`
 	Nick     	string    `db:"nick"`
 	Password	string 	  `db:"password"`
-	Status    	int       `db:"status"`
+	Status    	int8       `db:"status"`
 	CreateTime time.Time `db:"create_time"`
 	UpdateTime time.Time `db:"update_time"`
 }
