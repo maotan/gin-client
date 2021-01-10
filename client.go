@@ -35,7 +35,7 @@ func main() {
 		pingDo := domain.PingDo{Name:"ping", Age: 12, Email: "gk@126.com"}
 		res, err := feign_client.FeignGinServer.GinServerPingPost(pingDo)
 		if err != nil{
-			panic(truffle.NewWarnError(700, "123"))
+			panic(truffle.NewWarnError(70010, err.Error()))
 		}
 		c.String(res.StatusCode(), string(res.Body()))
 	})

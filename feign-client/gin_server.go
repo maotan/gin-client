@@ -27,6 +27,6 @@ func (f *GinServer) GinServerPing() (res *resty.Response, e error){
 }
 
 func (f *GinServer) GinServerPingPost(pingDo domain.PingDo) (res *resty.Response, e error){
-	res, err := feign.GetRequest(feignAppName).SetBody(pingDo).Post("/v1/ping/post")
+	res, err := feign.GetRequest(feignAppName).SetBody(pingDo).Post("/v1/ping")
 	return res, err
 }
