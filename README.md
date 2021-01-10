@@ -1,2 +1,3 @@
-# go-truffle
-web frame core for go gin 
+# gin-client description
+##### dto：后端与页面之间交互的实体
+##### domain:　后端业务之间交互的实体
