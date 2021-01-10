@@ -27,7 +27,7 @@ func main() {
 		panic(err)
 	}
 
-	router := gin.Default()
+	router := gin.New()
 	web.RouterInit(router)
 	web.DatabaseInit()  // db
 	router.GET("/client/ping", func(c *gin.Context) {
