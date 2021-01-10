@@ -33,7 +33,7 @@ func main() {
 	router.GET("/client/ping", func(c *gin.Context) {
 
 		pingDo := domain.PingDo{Name:"ping", Age: 12, Email: "gk@126.com"}
-		res, err := feign_client.GinServerPingPost(pingDo)
+		res, err := feign_client.FeignGinServer.GinServerPingPost(pingDo)
 		if err != nil{
 			panic(truffle.NewWarnError(700, "123"))
 		}

@@ -15,12 +15,18 @@ const (
 	feignAppName = "gin-server"
 )
 
-func GinServerPing() (res *resty.Response, e error){
+type GinServer struct {
+
+}
+
+var FeignGinServer = &GinServer{}
+
+func (f *GinServer) GinServerPing() (res *resty.Response, e error){
 	res, err := feign.GetRequest(feignAppName).Get("/v1/ping")
 	return res, err
 }
 
-func GinServerPingPost(pingDo domain.PingDo) (res *resty.Response, e error){
+func (f *GinServer) GinServerPingPost(pingDo domain.PingDo) (res *resty.Response, e error){
 	res, err := feign.GetRequest(feignAppName).SetBody(pingDo).Post("/v1/ping/post")
 	return res, err
 }
