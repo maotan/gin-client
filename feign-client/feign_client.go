@@ -5,7 +5,10 @@
  */
 package feign_client
 
-import "github.com/maotan/go-truffle/feign"
+import (
+	"gin-client/domain"
+	"github.com/maotan/go-truffle/feign"
+)
 import "github.com/go-resty/resty/v2"
 
 const (
@@ -14,5 +17,10 @@ const (
 
 func GinServerPing() (res *resty.Response, e error){
 	res, err := feign.GetRequest(feignAppName).Get("/v1/ping")
+	return res, err
+}
+
+func GinServerPingPost(pingDo domain.PingDo) (res *resty.Response, e error){
+	res, err := feign.GetRequest(feignAppName).SetBody(pingDo).Post("/v1/ping/post")
 	return res, err
 }

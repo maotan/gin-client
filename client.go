@@ -7,6 +7,7 @@ package main
 
 import (
 	"fmt"
+	"gin-client/domain"
 	feign_client "gin-client/feign-client"
 	"gin-client/model"
 	"github.com/gin-contrib/sessions"
@@ -30,7 +31,9 @@ func main() {
 	web.RouterInit(router)
 	web.DatabaseInit()  // db
 	router.GET("/client/ping", func(c *gin.Context) {
-		res, err := feign_client.GinServerPing()
+
+		pingDo := domain.PingDo{Name:"ping", Age: 12, Email: "gk@126.com"}
+		res, err := feign_client.GinServerPingPost(pingDo)
 		if err != nil{
 			panic(truffle.NewWarnError(700, "123"))
 		}
