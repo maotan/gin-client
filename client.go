@@ -30,25 +30,26 @@ func main() {
 	router := gin.New()
 	web.RouterInit(router)
 	web.DatabaseInit()  // db
-	router.GET("/client/ping", func(c *gin.Context) {
+	router.GET("/client/ping", func(ctx *gin.Context) {
 
 		pingDo := domain.PingDo{Name:"ping", Age: 12, Email: "gk@126.com"}
 		res, err := feign_client.FeignGinServer.GinServerPingPost(pingDo)
 		if err != nil{
 			panic(truffle.NewWarnError(70010, err.Error()))
 		}
-		c.String(res.StatusCode(), string(res.Body()))
+		//ctx.String(res.StatusCode(), string(res.Body()))
+		ctx.String(res.StatusCode(), res.String())
 	})
 
-	router.GET("/client/users", func(c *gin.Context) {
-		session := sessions.Default(c)
+	router.GET("/client/users", func(ctx *gin.Context) {
+		session := sessions.Default(ctx)
 		userId := session.Get("userId")
 		userDb := &model.User{}
 		gosql.Model(userDb).Where("id=?", userId).Get()
 		if userDb.Id == 0{
 			panic(truffle.NewWarnError(40400, "不存在该用户"))
 		}
-		c.JSON(http.StatusOK, truffle.Success(userDb))
+		ctx.JSON(http.StatusOK, truffle.Success(userDb))
 	})
 
 	serverConf := yaml_config.YamlConf.ServerConf
