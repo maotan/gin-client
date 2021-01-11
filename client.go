@@ -8,7 +8,7 @@ package main
 import (
 	"fmt"
 	"gin-client/domain"
-	feign_client "gin-client/feign-client"
+	"gin-client/feign-client"
 	"gin-client/model"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
