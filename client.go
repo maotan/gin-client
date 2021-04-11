@@ -14,7 +14,6 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/goinggo/mapstructure"
 	"github.com/ilibs/gosql/v2"
 	"github.com/maotan/go-truffle/httpresult"
 	"github.com/maotan/go-truffle/web"
@@ -40,9 +39,10 @@ func main() {
 			panic(httpresult.NewWarnError(base.Code, base.Msg))
 		}
 		var pingRes domain.PingDo
-		if err := mapstructure.Decode(base.Data, &pingRes); err != nil {
-			panic(httpresult.NewWarnError(5000, err.Error()))
-		}
+		httpresult.Decode(base, &pingRes)
+		//if err := mapstructure.Decode(base.Data, &pingRes); err != nil {
+		//	panic(httpresult.NewWarnError(5000, err.Error()))
+		//}
 		ctx.JSON(200, httpresult.Success(pingRes))
 		//ctx.String(res.StatusCode(), res.String())
 	})
