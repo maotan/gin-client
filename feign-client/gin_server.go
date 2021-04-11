@@ -22,12 +22,16 @@ type GinServer struct {
 
 var FeignGinServer = &GinServer{}
 
-func (f *GinServer) GinServerPing() (res *resty.Response, e error) {
+func (f *GinServer) GinServerPing() (*resty.Response, error) {
 	res, err := feign.GetRequest(feignAppName).Get("/v1/ping")
 	return res, err
 }
 
-func (f *GinServer) GinServerPingPost(pingDo domain.PingDo) (res *resty.Response, e error) {
+func (f *GinServer) GinServerPingPost(pingDo domain.PingDo) *httpresult.BaseResult {
 	res, err := feign.GetRequest(feignAppName).SetBody(pingDo).SetResult(&httpresult.BaseResult{}).Post("/v1/ping")
-	return res, err
+	if err != nil {
+		panic(httpresult.NewWarnError(500, err.Error()))
+	}
+	base := res.Result().(*httpresult.BaseResult)
+	return base
 }

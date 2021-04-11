@@ -35,18 +35,16 @@ func main() {
 	router.GET("/client/ping", func(ctx *gin.Context) {
 
 		pingDo := domain.PingDo{Name: "ping", Age: 12, Email: "gk@126.com"}
-		res, err := feign_client.FeignGinServer.GinServerPingPost(pingDo)
-		if err != nil {
-			panic(httpresult.NewWarnError(70010, err.Error()))
+		base := feign_client.FeignGinServer.GinServerPingPost(pingDo)
+		if base.Code != httpresult.SuccessCode {
+			panic(httpresult.NewWarnError(base.Code, base.Msg))
 		}
-		//ctx.String(res.StatusCode(), string(res.Body()))
-		aa := res.Result().(*httpresult.BaseResult)
-		fmt.Printf("\nResponse Body: %v", aa)
-		var person domain.PingDo
-		if err := mapstructure.Decode(aa.Data, &person); err != nil {
-			fmt.Println(err)
+		var pingRes domain.PingDo
+		if err := mapstructure.Decode(base.Data, &pingRes); err != nil {
+			panic(httpresult.NewWarnError(5000, err.Error()))
 		}
-		ctx.String(res.StatusCode(), res.String())
+		ctx.JSON(200, httpresult.Success(pingRes))
+		//ctx.String(res.StatusCode(), res.String())
 	})
 
 	router.GET("/client/users", func(ctx *gin.Context) {
