@@ -26,10 +26,5 @@ func (f *GinServer) GinServerPing() *httpresult.BaseResult {
 }
 
 func (f *GinServer) GinServerPingPost(pingDo domain.PingDo) *httpresult.BaseResult {
-	//res, err := feign.GetRequest(feignAppName).SetBody(pingDo).SetResult(&httpresult.BaseResult{}).Post("/v1/ping")
-	//if err != nil {
-	//	panic(httpresult.NewWarnError(500, err.Error()))
-	//}
-	// base := res.Result().(*httpresult.BaseResult)
 	return feign.Post(feignAppName, "/v1/ping", pingDo)
 }
