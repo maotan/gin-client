@@ -8,34 +8,35 @@ package main
 import (
 	"fmt"
 	"gin-client/domain"
-	"gin-client/feign-client"
+	feign_client "gin-client/feign-client"
 	"gin-client/model"
+	"net/http"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/ilibs/gosql/v2"
-	"github.com/maotan/go-truffle/truffle"
+	"github.com/maotan/go-truffle/httpresult"
 	"github.com/maotan/go-truffle/web"
 	"github.com/maotan/go-truffle/yaml_config"
 	log "github.com/sirupsen/logrus"
-	"net/http"
 )
 
 func main() {
 
-	registryClient, err:= web.ConsulInit(map[string]string{"client": "zyn3"})
-	if err != nil{
+	registryClient, err := web.ConsulInit(map[string]string{"client": "zyn3"})
+	if err != nil {
 		panic(err)
 	}
 
 	router := gin.New()
 	web.RouterInit(router)
-	web.DatabaseInit()  // db
+	web.DatabaseInit() // db
 	router.GET("/client/ping", func(ctx *gin.Context) {
 
-		pingDo := domain.PingDo{Name:"ping", Age: 12, Email: "gk@126.com"}
+		pingDo := domain.PingDo{Name: "ping", Age: 12, Email: "gk@126.com"}
 		res, err := feign_client.FeignGinServer.GinServerPingPost(pingDo)
-		if err != nil{
-			panic(truffle.NewWarnError(70010, err.Error()))
+		if err != nil {
+			panic(httpresult.NewWarnError(70010, err.Error()))
 		}
 		//ctx.String(res.StatusCode(), string(res.Body()))
 		ctx.String(res.StatusCode(), res.String())
@@ -46,17 +47,17 @@ func main() {
 		userId := session.Get("userId")
 		userDb := &model.User{}
 		gosql.Model(userDb).Where("id=?", userId).Get()
-		if userDb.Id == 0{
-			panic(truffle.NewWarnError(40400, "不存在该用户"))
+		if userDb.Id == 0 {
+			panic(httpresult.NewWarnError(40400, "不存在该用户"))
 		}
-		ctx.JSON(http.StatusOK, truffle.Success(userDb))
+		ctx.JSON(http.StatusOK, httpresult.Success(userDb))
 	})
 
 	serverConf := yaml_config.YamlConf.ServerConf
 	runHostPort := fmt.Sprintf(":%d", serverConf.Port)
 	log.Info("app run...")
 	err = router.Run(runHostPort)
-	if err != nil{
+	if err != nil {
 		registryClient.Deregister()
 	}
 }
