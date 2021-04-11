@@ -40,9 +40,6 @@ func main() {
 		}
 		var pingRes domain.PingDo
 		httpresult.Decode(base, &pingRes)
-		//if err := mapstructure.Decode(base.Data, &pingRes); err != nil {
-		//	panic(httpresult.NewWarnError(5000, err.Error()))
-		//}
 		ctx.JSON(200, httpresult.Success(pingRes))
 		//ctx.String(res.StatusCode(), res.String())
 	})
