@@ -30,6 +30,6 @@ func (f *GinServer) GinServerPingPost(pingDo domain.PingDo) *httpresult.BaseResu
 	//if err != nil {
 	//	panic(httpresult.NewWarnError(500, err.Error()))
 	//}
-	//base := res.Result().(*httpresult.BaseResult)
+	// base := res.Result().(*httpresult.BaseResult)
 	return feign.Post(feignAppName, "/v1/ping", pingDo)
 }
