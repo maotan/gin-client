@@ -1,12 +1,8 @@
-/**
-* @Author: mo tan
-* @Description: domain
-* @Date 2021/1/10 9:37
- */
+// Package domain /**
 package domain
 
 type PingDo struct {
-	Name  string `mapstructure:"name" json:"name"`
-	Age   int    `mapstructure:"age" json:"age"`
-	Email string `mapstructure:"email" json:"email"`
+	Name  string `json:"name"`
+	Age   int    `json:"age"`
+	Email string `json:"email"`
 }
