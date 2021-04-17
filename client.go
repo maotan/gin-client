@@ -8,7 +8,7 @@ package main
 import (
 	"fmt"
 	"gin-client/domain"
-	feign_client "gin-client/feign-client"
+	"gin-client/feignclient"
 	"gin-client/model"
 	"net/http"
 
@@ -17,7 +17,7 @@ import (
 	"github.com/ilibs/gosql/v2"
 	"github.com/maotan/go-truffle/httpresult"
 	"github.com/maotan/go-truffle/web"
-	"github.com/maotan/go-truffle/yaml_config"
+	"github.com/maotan/go-truffle/yamlconf"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -34,7 +34,7 @@ func main() {
 	router.GET("/client/ping", func(ctx *gin.Context) {
 
 		pingDo := domain.PingDo{Name: "ping", Age: 12, Email: "gk@126.com"}
-		base := feign_client.FeignGinServer.GinServerPingPost(pingDo)
+		base := feignclient.GinServerPingPost(pingDo)
 		if base.Code != httpresult.SuccessCode {
 			panic(httpresult.NewWarnError(base.Code, base.Msg))
 		}
@@ -55,7 +55,7 @@ func main() {
 		ctx.JSON(http.StatusOK, httpresult.Success(userDb))
 	})
 
-	serverConf := yaml_config.YamlConf.ServerConf
+	serverConf := yamlconf.YamlConf.ServerConf
 	runHostPort := fmt.Sprintf(":%d", serverConf.Port)
 	log.Info("app run...")
 	err = router.Run(runHostPort)
